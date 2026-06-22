@@ -1,4 +1,4 @@
-// js/core.js - integrate weapons & classes, firing loop, bullets rendering
+// js/core.js - wire waves, particles and bullets rendering into main loop
 import { AudioManager } from './js/audio.js';
 import { Player } from './js/player.js';
 import { UI } from './js/ui.js';
@@ -6,6 +6,8 @@ import { EnemyController } from './js/enemies.js';
 import { shop } from './js/shop.js';
 import { Weapons, updateBullets, renderBullets } from './js/weapons.js';
 import { CLASSES, getClassById } from './js/classes.js';
+import { WaveManager } from './js/waves.js';
+import { spawnParticle, updateParticles, renderParticles } from './js/particles.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -18,7 +20,11 @@ resize();
 let state = 'home';
 const player = new Player();
 window.__PA_PLAYER_INSTANCE = player; // for shop apply
-const enemies = new EnemyController();
+const enemiesCtrl = new EnemyController();
+
+const waveManager = new WaveManager(enemiesCtrl.enemies);
+waveManager.onWaveStart = (w)=>{ const el = document.getElementById('waveBanner'); if(el) el.textContent='WAVE '+w; };
+waveManager.onWaveEnd = (w)=>{ const el = document.getElementById('waveBanner'); if(el) el.textContent='WAVE '+w+' CLEAR - SHOP'; };
 
 // class selection default
 let selectedClass = CLASSES[0];
@@ -31,16 +37,13 @@ UI.init({ player });
 UI.on('play', ()=>{ startMission(); });
 UI.on('openShop', ()=>{ openShop(); });
 
-// add class selector to home screen dynamically
+// class selector
 function buildClassSelector(){
   const container = document.createElement('div'); container.style.marginTop='12px'; container.style.display='flex'; container.style.gap='8px';
-  CLASSES.forEach(c=>{
-    const b = document.createElement('button'); b.className='btn'; b.textContent=c.name; b.title=c.desc; b.addEventListener('click', ()=>{ selectClass(c.id); }); container.appendChild(b);
-  });
+  CLASSES.forEach(c=>{ const b = document.createElement('button'); b.className='btn'; b.textContent=c.name; b.title=c.desc; b.addEventListener('click', ()=>{ selectClass(c.id); }); container.appendChild(b); });
   const homeCard = document.querySelector('.homeCard'); homeCard.appendChild(container);
 }
-function selectClass(id){ selectedClass = getClassById(id); // apply base stats
-  player.maxHp = selectedClass.stats.hp; player.hp = player.maxHp; player.speed = selectedClass.stats.speed; player.damage = selectedClass.stats.damage; player.fireRate = selectedClass.stats.fireRate; player.level = 1; player.loadout = selectedClass.startingLoadout.slice(); }
+function selectClass(id){ selectedClass = getClassById(id); player.maxHp = selectedClass.stats.hp; player.hp = player.maxHp; player.speed = selectedClass.stats.speed; player.damage = selectedClass.stats.damage; player.fireRate = selectedClass.stats.fireRate; player.level = 1; player.loadout = (selectedClass.startingLoadout||[]).slice(); }
 buildClassSelector();
 selectClass('default');
 
@@ -62,66 +65,21 @@ function hideSettings(){ settingsModal.classList.remove('show'); settingsModal.s
 function showShop(){ shop.open(); }
 function hideShop(){ shop.close(); }
 
-function startMission(){
-  state = 'playing';
-  document.getElementById('homeScreen').style.display = 'none';
-  player.reset();
-  // apply selectedClass again to player
-  selectClass(selectedClass.id);
-  // apply loadout items to player for run
-  for(const itId of player.loadout){ const it = window.__PA_SHOP_ITEM_LOOKUP && window.__PA_SHOP_ITEM_LOOKUP[itId]; if(it && it.apply) try{ it.apply(player); }catch(e){console.warn(e);} }
-  enemies.reset();
-  last = performance.now();
-}
+function startMission(){ state = 'playing'; document.getElementById('homeScreen').style.display = 'none'; player.reset(); selectClass(selectedClass.id); enemiesCtrl.reset(); waveManager.startNext(); last = performance.now(); }
 
 let last = performance.now();
-function loop(now){
-  const dt = Math.min(0.05, (now-last)/1000);
-  last = now;
-  update(dt);
-  render();
-  requestAnimationFrame(loop);
-}
+function loop(now){ const dt = Math.min(0.05, (now-last)/1000); last = now; update(dt); render(); requestAnimationFrame(loop); }
 
-function update(dt){
-  if(state === 'playing'){
-    player.update(dt);
-    enemies.update(dt, player);
-    updateBullets(dt, enemies.enemies);
-  }
-}
+function update(dt){ if(state === 'playing'){ player.update(dt); enemiesCtrl.update(dt, player); updateBullets(dt, enemiesCtrl.enemies); updateParticles(dt); waveManager.update(dt); if(!waveManager.waveActive && !waveManager.inShop){ waveManager.endWave(); } } }
 
-function render(){
-  ctx.clearRect(0,0,W,H);
-  // background
-  ctx.fillStyle = '#04040a'; ctx.fillRect(0,0,W,H);
-  // simple HUD
-  ctx.fillStyle = '#fff';
-  ctx.font = '14px Inter, sans-serif';
-  ctx.fillText('State: '+state, 12, 24);
-  ctx.fillText('Gold: ' + (shop.currency||0), 12, 44);
-  if(state === 'playing'){
-    player.render(ctx);
-    enemies.render(ctx);
-    renderBullets(ctx);
-  }
-}
+function render(){ ctx.clearRect(0,0,W,H); ctx.fillStyle = '#04040a'; ctx.fillRect(0,0,W,H); ctx.fillStyle = '#fff'; ctx.font = '14px Inter, sans-serif'; ctx.fillText('State: '+state, 12, 24); ctx.fillText('Gold: ' + (shop.currency||0), 12, 44); if(state === 'playing'){ player.render(ctx); enemiesCtrl.render(ctx); renderBullets(ctx); renderParticles(ctx); } }
 
 requestAnimationFrame(loop);
 
-// firing: auto-fire loop based on player.fireRate; manual aim via pointer
-let aimX = 0, aimY = 0, hasManualAim = false;
-canvas.addEventListener('pointermove', e=>{ aimX = e.clientX; aimY = e.clientY; hasManualAim = true; });
-canvas.addEventListener('pointerdown', e=>{ aimX = e.clientX; aimY = e.clientY; hasManualAim = true; });
+// firing aim
+let aimX = 0, aimY = 0; window.__PA_AIM_ANGLE = 0; const rect = canvas.getBoundingClientRect();
+canvas.addEventListener('pointermove', e=>{ aimX = e.clientX; aimY = e.clientY; const r = canvas.getBoundingClientRect(); const cx = aimX - r.left; const cy = aimY - r.top; const wx = cx - canvas.clientWidth/2; const wy = cy - canvas.clientHeight/2; window.__PA_AIM_ANGLE = Math.atan2(wy - player.y, wx - player.x); });
 
-function getAimAngle(){ if(hasManualAim){ const rect = canvas.getBoundingClientRect(); const cx = aimX - rect.left; const cy = aimY - rect.top; const wx = cx - canvas.clientWidth/2; const wy = cy - canvas.clientHeight/2; return Math.atan2(wy - player.y, wx - player.x); } // fallback auto target
-  if(enemies.enemies.length>0){ const e = enemies.enemies[0]; return Math.atan2(e.y - player.y, e.x - player.x); }
-  return player.facing;
-}
-
-// player firing handled in player.update by checking fireTimer
-
-// expose item lookup to core for applying on start
-import * as ItemsModule from './items.js';
-window.__PA_SHOP_ITEM_LOOKUP = Object.fromEntries(ItemsModule.ITEMS.map(i=>[i.id,i]));
+// clickable enemy kill to award gold (keeps working)
+canvas.addEventListener('pointerdown', e=>{ if(state !== 'playing') return; const idx = enemiesCtrl.findAtScreen(e.clientX, e.clientY, canvas); if(idx >= 0){ const killed = enemiesCtrl.enemies.splice(idx,1)[0]; const val = killed.value || 8; shop.addCurrency(val); AudioManager.playHit(); spawnParticle(killed.x, killed.y, (Math.random()-0.5)*80, (Math.random()-0.5)*80, 0.8, 4, '#ffd35e'); } });
 
