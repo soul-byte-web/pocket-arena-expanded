@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pocket Arena Expanded</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="title">POCKET ARENA</div>
+      <div class="controls">
+        <button id="openShop" class="btn">Shop</button>
+        <button id="settingsBtn" class="btn">Settings</button>
+      </div>
+    </header>
+    <div class="container">
+      <div class="main">
+        <canvas id="gameCanvas"></canvas>
+        <div class="screen" id="homeScreen">
+          <div class="homeCard">
+            <h1 class="homeTitle">Pocket Arena</h1>
+            <p class="small">Neon arena, synthwave soundtrack. Build your loadout, enter the arena, survive endless waves.</p>
+            <div style="height:18px"></div>
+            <button id="playBtn" class="btn" style="width:100%;">Play Mission</button>
+            <div style="height:12px"></div>
+            <button id="campaignBtn" class="btn" style="width:100%;background:linear-gradient(90deg,var(--gold),var(--accent));">Campaign</button>
+          </div>
+        </div>
+      </div>
+      <aside class="sidebar">
+        <div style="margin-bottom:12px"><strong>Player</strong></div>
+        <div id="playerSummary">Level 1 • Score: 0</div>
+        <div style="height:18px"></div>
+        <div><strong>Loadout</strong></div>
+        <div id="loadoutArea" style="margin-top:8px">Weapon: <em>Basic Blaster</em><br>Skin: <em>Neon Default</em></div>
+      </aside>
+    </div>
+    <div class="footer">
+      <div>Best: <span id="bestScore">0</span></div>
+      <div>v0.1.0</div>
+    </div>
+  </div>
+
+  <script type="module" src="js/core.js"></script>
+</body>
+</html>

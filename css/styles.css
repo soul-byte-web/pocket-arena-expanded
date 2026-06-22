@@ -1,0 +1,20 @@
+/* styles.css - basic layout and neon theme */
+:root{
+  --bg:#04040a; --neon:#5ef7ff; --accent:#ff5ef0; --gold:#ffd35e;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:Inter, 'Segoe UI', system-ui, sans-serif}
+#app{position:fixed;inset:0;display:flex;flex-direction:column}
+header{padding:28px 40px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0));display:flex;align-items:center;justify-content:space-between}
+.title{font-weight:900;letter-spacing:4px;font-size:20px;color:#fff;text-shadow:0 0 12px var(--neon)}
+.controls{display:flex;gap:12px;align-items:center}
+.btn{background:linear-gradient(90deg,var(--neon),var(--accent));color:#04040a;padding:10px 16px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
+.container{flex:1;display:flex}
+.sidebar{width:320px;padding:20px;background:rgba(255,255,255,0.02);border-left:1px solid rgba(255,255,255,0.02)}
+.main{flex:1;display:flex;align-items:center;justify-content:center}
+canvas{width:100%;height:100%;display:block}
+.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20}
+.homeCard{padding:24px 28px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.2));border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:420px;text-align:center}
+.homeTitle{font-size:36px;font-weight:900;margin:0 0 8px}
+.small{color:#9fdcff;font-size:13px}
+.footer{padding:12px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.2)}

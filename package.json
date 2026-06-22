@@ -1,0 +1,14 @@
+{
+  "name": "pocket-arena-expanded",
+  "version": "0.1.0",
+  "description": "Expanded version of Pocket Arena - neon cyberpunk, synthwave audio, modular architecture",
+  "scripts": {
+    "start": "http-server -c-1 -p 8080",
+    "build": "echo 'No build step yet'"
+  },
+  "author": "soul-byte-web",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
