@@ -1,13 +1,13 @@
 // js/core.js - wire waves, particles and bullets rendering into main loop
-import { AudioManager } from './js/audio.js';
-import { Player } from './js/player.js';
-import { UI } from './js/ui.js';
-import { EnemyController } from './js/enemies.js';
-import { shop } from './js/shop.js';
-import { Weapons, updateBullets, renderBullets } from './js/weapons.js';
-import { CLASSES, getClassById } from './js/classes.js';
-import { WaveManager } from './js/waves.js';
-import { spawnParticle, updateParticles, renderParticles } from './js/particles.js';
+import { AudioManager } from './audio.js';
+import { Player } from './player.js';
+import { UI } from './ui.js';
+import { EnemyController } from './enemies.js';
+import { shop } from './shop.js';
+import { Weapons, updateBullets, renderBullets } from './weapons.js';
+import { CLASSES, getClassById } from './classes.js';
+import { WaveManager } from './waves.js';
+import { spawnParticle, updateParticles, renderParticles } from './particles.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
