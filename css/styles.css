@@ -1,20 +1,48 @@
-/* styles.css - basic layout and neon theme */
+/* styles.css - refined neon theme + animations for home UI polish */
 :root{
-  --bg:#04040a; --neon:#5ef7ff; --accent:#ff5ef0; --gold:#ffd35e;
+  --bg:#04040a; --neon:#5ef7ff; --accent:#ff5ef0; --gold:#ffd35e; --glass:rgba(255,255,255,0.04);
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:Inter, 'Segoe UI', system-ui, sans-serif}
 #app{position:fixed;inset:0;display:flex;flex-direction:column}
-header{padding:28px 40px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0));display:flex;align-items:center;justify-content:space-between}
-.title{font-weight:900;letter-spacing:4px;font-size:20px;color:#fff;text-shadow:0 0 12px var(--neon)}
-.controls{display:flex;gap:12px;align-items:center}
-.btn{background:linear-gradient(90deg,var(--neon),var(--accent));color:#04040a;padding:10px 16px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
-.container{flex:1;display:flex}
-.sidebar{width:320px;padding:20px;background:rgba(255,255,255,0.02);border-left:1px solid rgba(255,255,255,0.02)}
-.main{flex:1;display:flex;align-items:center;justify-content:center}
+header{padding:20px 28px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0));display:flex;align-items:center;justify-content:space-between}
+.title{font-weight:900;letter-spacing:4px;font-size:18px;color:#fff;text-shadow:0 0 12px var(--neon)}
+.controls{display:flex;gap:10px;align-items:center}
+.btn{background:linear-gradient(90deg,var(--neon),var(--accent));color:#04040a;padding:10px 14px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
+.btn.alt{background:linear-gradient(90deg,var(--gold),var(--accent));}
+.container{flex:1;display:flex;position:relative}
+.sidebar{width:320px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.06));border-left:1px solid rgba(255,255,255,0.02)}
+.main{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
 canvas{width:100%;height:100%;display:block}
-.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20}
-.homeCard{padding:24px 28px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.2));border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:420px;text-align:center}
+.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20;pointer-events:none}
+.homeCard{pointer-events:auto;padding:22px 26px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(0,0,0,0.18));border-radius:12px;border:1px solid var(--glass);width:420px;text-align:center;backdrop-filter: blur(4px)}
 .homeTitle{font-size:36px;font-weight:900;margin:0 0 8px}
 .small{color:#9fdcff;font-size:13px}
-.footer{padding:12px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.2)}
+.footer{padding:12px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.06);border-top:1px solid rgba(255,255,255,0.02)}
+
+/* animated neon background */
+.neon-bg{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.neon-stripe{position:absolute;left:-30%;width:160%;height:140%;background:radial-gradient(circle at 20% 30%, rgba(94,247,255,0.06), transparent 8%), repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 12px);transform:skewY(-8deg);filter:blur(28px);animation: drift 16s linear infinite}
+.neon-stripe.s2{background:radial-gradient(circle at 80% 70%, rgba(255,94,240,0.05), transparent 10%), repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 14px);animation-duration:28s}
+@keyframes drift{from{transform:translateX(-10%) skewY(-8deg)}to{transform:translateX(10%) skewY(-8deg)}}
+
+/* subtle glow behind UI */
+.homeCard::before{content:"";position:absolute;inset:-2px;border-radius:12px;background:linear-gradient(90deg, rgba(94,247,255,0.06), rgba(255,94,240,0.05));z-index:-1;filter:blur(12px)}
+
+/* modals */
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.96);width:520px;padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(10,10,20,0.98),rgba(8,8,18,0.98));border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 30px rgba(0,0,0,0.6);z-index:60;opacity:0;pointer-events:none;transition:all 220ms ease}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal h3{margin:0 0 10px}
+.range{display:flex;align-items:center;gap:10px}
+.range input[type=range]{flex:1}
+
+/* shop grid placeholder */
+.shopGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.06));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+
+/* responsive tweaks */
+@media (max-width:900px){
+  .sidebar{display:none}
+  .homeCard{width:92vw}
+  .modal{width:92vw}
+}

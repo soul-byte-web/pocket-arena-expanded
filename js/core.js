@@ -1,4 +1,4 @@
-// js/core.js - main entry
+// js/core.js - updated: wire UI controls and settings modal
 import { AudioManager } from './js/audio.js';
 import { Player } from './js/player.js';
 import { UI } from './js/ui.js';
@@ -16,13 +16,31 @@ let state = 'home'; // home | playing | shop | settings
 const player = new Player();
 const enemies = new EnemyController();
 
+// Audio
+AudioManager.init();
+
 // UI wiring
 UI.init({ player });
 UI.on('play', ()=>{ startMission(); });
 UI.on('openShop', ()=>{ openShop(); });
 
-// Audio
-AudioManager.init();
+// DOM bindings for modals
+const settingsModal = document.getElementById('settingsModal');
+const shopModal = document.getElementById('shopModal');
+
+document.getElementById('settingsBtn').addEventListener('click', ()=>{ showSettings(); });
+document.getElementById('closeSettings').addEventListener('click', ()=>{ hideSettings(); });
+
+document.getElementById('openShop').addEventListener('click', ()=>{ showShop(); });
+document.getElementById('closeShop').addEventListener('click', ()=>{ hideShop(); });
+
+document.getElementById('musicSlider').addEventListener('input', e=>{ AudioManager.setMusicVolume(parseFloat(e.target.value)); });
+document.getElementById('sfxSlider').addEventListener('input', e=>{ AudioManager.setSfxVolume(parseFloat(e.target.value)); });
+
+function showSettings(){ settingsModal.classList.add('show'); settingsModal.setAttribute('aria-hidden','false'); }
+function hideSettings(){ settingsModal.classList.remove('show'); settingsModal.setAttribute('aria-hidden','true'); }
+function showShop(){ shopModal.classList.add('show'); shopModal.setAttribute('aria-hidden','false'); }
+function hideShop(){ shopModal.classList.remove('show'); shopModal.setAttribute('aria-hidden','true'); }
 
 function startMission(){
   state = 'playing';
@@ -31,9 +49,8 @@ function startMission(){
   enemies.reset();
   last = performance.now();
 }
-function openShop(){
-  alert('Shop: coming soon in next PR');
-}
+
+function openShop(){ showShop(); }
 
 let last = performance.now();
 function loop(now){
@@ -69,5 +86,4 @@ requestAnimationFrame(loop);
 
 // basic controls binding
 document.getElementById('playBtn').addEventListener('click', ()=>{ AudioManager.playClick(); UI.emit('play'); });
-document.getElementById('openShop').addEventListener('click', ()=>{ AudioManager.playClick(); UI.emit('openShop'); });
 

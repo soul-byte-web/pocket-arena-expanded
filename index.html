@@ -17,17 +17,45 @@
     </header>
     <div class="container">
       <div class="main">
+        <div class="neon-bg" aria-hidden="true">
+          <div class="neon-stripe" style="top:-10%;"></div>
+          <div class="neon-stripe s2" style="top:30%;opacity:0.9"></div>
+        </div>
         <canvas id="gameCanvas"></canvas>
         <div class="screen" id="homeScreen">
-          <div class="homeCard">
+          <div class="homeCard" role="region" aria-label="Home">
             <h1 class="homeTitle">Pocket Arena</h1>
             <p class="small">Neon arena, synthwave soundtrack. Build your loadout, enter the arena, survive endless waves.</p>
             <div style="height:18px"></div>
             <button id="playBtn" class="btn" style="width:100%;">Play Mission</button>
             <div style="height:12px"></div>
-            <button id="campaignBtn" class="btn" style="width:100%;background:linear-gradient(90deg,var(--gold),var(--accent));">Campaign</button>
+            <button id="campaignBtn" class="btn alt" style="width:100%;">Campaign</button>
           </div>
         </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-hidden="true">
+          <h3>Settings</h3>
+          <div style="margin-bottom:10px">Audio</div>
+          <div class="range"><label>Music</label><input id="musicSlider" type="range" min="0" max="1" step="0.01" value="0.6"></div>
+          <div class="range" style="margin-top:8px"><label>SFX</label><input id="sfxSlider" type="range" min="0" max="1" step="0.01" value="0.9"></div>
+          <div style="height:12px"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end"><button id="closeSettings" class="btn">Close</button></div>
+        </div>
+
+        <!-- Shop Modal -->
+        <div class="modal" id="shopModal" role="dialog" aria-modal="true" aria-hidden="true">
+          <h3>Shop & Equipment</h3>
+          <div>Currency: <strong id="currency">0</strong></div>
+          <div class="shopGrid" id="shopGrid">
+            <div class="card">Weapon Skin A<br><small>500</small></div>
+            <div class="card">Player Skin B<br><small>750</small></div>
+            <div class="card">Trail FX<br><small>300</small></div>
+          </div>
+          <div style="height:12px"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end"><button id="closeShop" class="btn">Close</button></div>
+        </div>
+
       </div>
       <aside class="sidebar">
         <div style="margin-bottom:12px"><strong>Player</strong></div>
