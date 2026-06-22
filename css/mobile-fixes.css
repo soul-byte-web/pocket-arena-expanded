@@ -1,31 +1,41 @@
-/* css/mobile-fixes.css - responsive modal and mobile fixes */
+/* css/mobile-fixes.css - responsive modal and mobile fixes (revised)
+   Updated to target .screen used in the site and ensure header stays on top.
+*/
 
 :root {
   --page-gap: 16px;
+  --header-offset: 88px; /* space reserved for header on small screens */
 }
 
-/* Keep header above any centered modal/card */
+/* Keep header above any centered modal/card and pin it so overlays can't cover it */
 header,
 .site-header,
 .header {
-  position: sticky;
+  position: fixed !important;
   top: 0;
-  z-index: 60;
-  background: transparent;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(180deg, rgba(4,4,10,0.95), rgba(4,4,10,0.6));
+  /* preserve original padding but keep height stable */
+  padding: 28px 40px;
+  box-sizing: border-box;
 }
 
-/* Backdrop and modal centering with mobile-safe padding */
-.modal-backdrop,
-.hero-backdrop,
-.dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: calc(var(--page-gap) + env(safe-area-inset-top)) var(--page-gap) calc(var(--page-gap) + env(safe-area-inset-bottom));
-  z-index: 50;
-  -webkit-overflow-scrolling: touch;
+/* Make space under the header so page content isn't hidden */
+.container { padding-top: var(--header-offset); }
+
+/* Target the site's overlay .screen (used in index.html) */
+.screen {
+  position: absolute !important;
+  /* push the top of the overlay below the fixed header */
+  inset: var(--header-offset) 0 0 0 !important;
+  display: flex !important;
+  align-items: flex-start !important; /* ensure card is below header */
+  justify-content: center !important;
+  z-index: 2000 !important;
+  padding-top: 18px;
+  overflow: visible;
 }
 
 /* Modal/card itself: size limits so it never covers entire viewport on mobile */
@@ -33,28 +43,23 @@ header,
 .modal-card,
 .hero-card,
 .dialog {
-  width: 100%;
-  max-width: 760px; /* desktop cap */
+  width: calc(100% - 40px);
+  max-width: 420px; /* match existing design */
   margin: 0 auto;
-  border-radius: 14px;
-  padding: 22px;
+  border-radius: 12px;
+  padding: 18px 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  background: linear-gradient(180deg, rgba(12,12,14,0.98), rgba(6,6,7,0.98));
-  backdrop-filter: blur(6px);
-  max-height: calc(100vh - 120px); /* ensures space above & below on small screens */
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.15));
+  max-height: calc(100vh - var(--header-offset) - 64px); /* leave room below */
   overflow: auto;
   box-sizing: border-box;
 }
 
-/* Ensure the header remains visible on small screens */
+/* On smaller screens reduce reserved header space */
 @media (max-width: 480px) {
-  .homeCard { padding: 18px; border-radius: 12px; }
-}
-
-/* On very small screens, make modal slightly smaller and pinned a bit lower */
-@media (max-height: 640px), (max-width: 420px) {
-  .modal-backdrop { align-items: flex-start; padding-top: calc(56px + env(safe-area-inset-top)); }
-  .homeCard, .modal-card { margin-top: 18px; max-height: calc(100vh - 140px); }
+  :root { --header-offset: 72px; }
+  header { padding: 20px 18px; }
+  .homeCard { padding: 14px; border-radius: 12px; }
 }
 
 /* Buttons: full-width, touch-friendly, keep gradient style */
@@ -85,7 +90,7 @@ header,
   color: #0c0c0e;
 }
 
-/* Footer / bottom bar: keep it visible and not overlapped by gestures */
+/* Footer / bottom bar: leave as-is but ensure it doesn't overlap content */
 .footer,
 .site-footer,
 .bottom-bar {
@@ -93,13 +98,14 @@ header,
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 45;
+  z-index: 9000;
   padding: 8px 16px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6));
+  background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.5));
   color: #fff;
   box-sizing: border-box;
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
 /* Small utility to prevent the canvas or main content from being hidden under fixed footer */
-.container { padding-bottom: 64px; }
+/* increase container bottom padding so content isn't hidden */
+.container { padding-bottom: 72px; }
