@@ -1,0 +1,111 @@
+/* css/mobile-fixes.css - responsive modal and mobile fixes (revised)
+   Updated to target .screen used in the site and ensure header stays on top.
+*/
+
+:root {
+  --page-gap: 16px;
+  --header-offset: 88px; /* space reserved for header on small screens */
+}
+
+/* Keep header above any centered modal/card and pin it so overlays can't cover it */
+header,
+.site-header,
+.header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(180deg, rgba(4,4,10,0.95), rgba(4,4,10,0.6));
+  /* preserve original padding but keep height stable */
+  padding: 28px 40px;
+  box-sizing: border-box;
+}
+
+/* Make space under the header so page content isn't hidden */
+.container { padding-top: var(--header-offset); }
+
+/* Target the site's overlay .screen (used in index.html) */
+.screen {
+  position: absolute !important;
+  /* push the top of the overlay below the fixed header */
+  inset: var(--header-offset) 0 0 0 !important;
+  display: flex !important;
+  align-items: flex-start !important; /* ensure card is below header */
+  justify-content: center !important;
+  z-index: 2000 !important;
+  padding-top: 18px;
+  overflow: visible;
+}
+
+/* Modal/card itself: size limits so it never covers entire viewport on mobile */
+.homeCard,
+.modal-card,
+.hero-card,
+.dialog {
+  width: calc(100% - 40px);
+  max-width: 420px; /* match existing design */
+  margin: 0 auto;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.15));
+  max-height: calc(100vh - var(--header-offset) - 64px); /* leave room below */
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+/* On smaller screens reduce reserved header space */
+@media (max-width: 480px) {
+  :root { --header-offset: 72px; }
+  header { padding: 20px 18px; }
+  .homeCard { padding: 14px; border-radius: 12px; }
+}
+
+/* Buttons: full-width, touch-friendly, keep gradient style */
+.btn,
+.button,
+.action-btn {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  margin: 12px auto;
+  padding: 14px 20px;
+  border-radius: 999px;
+  text-align: center;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  border: none;
+  cursor: pointer;
+}
+
+/* Example gradients — adjust to your variables if needed */
+.btn--primary {
+  background: linear-gradient(90deg,#8be9fd,#f09bff);
+  color: #0c0c0e;
+}
+
+.btn--secondary {
+  background: linear-gradient(90deg,#ffd27a,#ff80d0);
+  color: #0c0c0e;
+}
+
+/* Footer / bottom bar: leave as-is but ensure it doesn't overlap content */
+.footer,
+.site-footer,
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9000;
+  padding: 8px 16px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.5));
+  color: #fff;
+  box-sizing: border-box;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
+
+/* Small utility to prevent the canvas or main content from being hidden under fixed footer */
+/* increase container bottom padding so content isn't hidden */
+.container { padding-bottom: 72px; }
