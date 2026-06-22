@@ -1,20 +1,38 @@
-/* styles.css - basic layout and neon theme */
+/* styles.css - Brotato-like pixel retro theme */
 :root{
-  --bg:#04040a; --neon:#5ef7ff; --accent:#ff5ef0; --gold:#ffd35e;
+  --bg1:#0b0b0f; --bg2:#1a1620; --accent:#f29e4c; --accent2:#f25c54; --muted:#bfb6a8; --panel:#161418;
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:Inter, 'Segoe UI', system-ui, sans-serif}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--muted);font-family:'Press Start 2P', 'Courier New', monospace}
 #app{position:fixed;inset:0;display:flex;flex-direction:column}
-header{padding:28px 40px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0));display:flex;align-items:center;justify-content:space-between}
-.title{font-weight:900;letter-spacing:4px;font-size:20px;color:#fff;text-shadow:0 0 12px var(--neon)}
-.controls{display:flex;gap:12px;align-items:center}
-.btn{background:linear-gradient(90deg,var(--neon),var(--accent));color:#04040a;padding:10px 16px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
-.container{flex:1;display:flex}
-.sidebar{width:320px;padding:20px;background:rgba(255,255,255,0.02);border-left:1px solid rgba(255,255,255,0.02)}
-.main{flex:1;display:flex;align-items:center;justify-content:center}
-canvas{width:100%;height:100%;display:block}
-.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20}
-.homeCard{padding:24px 28px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.2));border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:420px;text-align:center}
-.homeTitle{font-size:36px;font-weight:900;margin:0 0 8px}
-.small{color:#9fdcff;font-size:13px}
-.footer{padding:12px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.2)}
+header{padding:14px 18px;background:transparent;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid rgba(255,255,255,0.03)}
+.title{font-weight:900;letter-spacing:2px;font-size:14px;color:var(--accent);text-shadow:0 1px 0 rgba(0,0,0,0.6)}
+.controls{display:flex;gap:8px;align-items:center}
+.btn{background:var(--panel);color:var(--muted);padding:8px 10px;border-radius:2px;border:3px solid rgba(0,0,0,0.6);cursor:pointer;font-weight:700}
+.btn.alt{background:var(--accent);color:#101010}
+.container{flex:1;display:flex;position:relative}
+.sidebar{width:300px;padding:14px;background:rgba(0,0,0,0.2);border-left:3px solid rgba(255,255,255,0.02)}
+.main{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20;pointer-events:none}
+.homeCard{pointer-events:auto;padding:18px 20px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.18));border-radius:4px;border:3px solid rgba(0,0,0,0.6);width:420px;text-align:center}
+.homeTitle{font-size:18px;font-weight:900;margin:0 0 8px;color:var(--accent)}
+.small{color:var(--muted);font-size:12px}
+.footer{padding:10px;display:flex;justify-content:space-between;align-items:center;background:transparent;border-top:3px solid rgba(255,255,255,0.03)}
+
+/* modal / shop */
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.98);width:540px;padding:12px;border-radius:4px;background:linear-gradient(180deg,#141214,#101010);border:3px solid rgba(0,0,0,0.6);z-index:60;opacity:0;pointer-events:none;transition:all 160ms ease}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal h3{margin:0 0 8px;color:var(--accent)}
+.range{display:flex;align-items:center;gap:10px}
+.range input[type=range]{flex:1}
+
+.shopGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.card{background:#0e0e10;padding:8px;border-radius:3px;border:2px solid rgba(255,255,255,0.03);font-size:11px;color:var(--muted)}
+.shop-card .buy-btn{padding:6px 8px;font-size:12px}
+
+/* retro scanlines overlay */
+.scanline{pointer-events:none;position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.04) 51%);background-size:100% 4px}
+
+/* responsive */
+@media (max-width:900px){ .sidebar{display:none} .homeCard{width:92vw} .modal{width:92vw} }

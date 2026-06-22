@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Pocket Arena Expanded</title>
+  <!-- Pixel font for Brotato-like look -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -17,24 +19,45 @@
     </header>
     <div class="container">
       <div class="main">
+        <div class="scanline" aria-hidden="true"></div>
         <canvas id="gameCanvas"></canvas>
         <div class="screen" id="homeScreen">
-          <div class="homeCard">
+          <div class="homeCard" role="region" aria-label="Home">
             <h1 class="homeTitle">Pocket Arena</h1>
-            <p class="small">Neon arena, synthwave soundtrack. Build your loadout, enter the arena, survive endless waves.</p>
-            <div style="height:18px"></div>
-            <button id="playBtn" class="btn" style="width:100%;">Play Mission</button>
+            <p class="small">Fast top-down survival. Pick a class, buy items, survive waves.</p>
             <div style="height:12px"></div>
-            <button id="campaignBtn" class="btn" style="width:100%;background:linear-gradient(90deg,var(--gold),var(--accent));">Campaign</button>
+            <button id="playBtn" class="btn" style="width:100%;">Play Mission</button>
+            <div style="height:8px"></div>
+            <button id="campaignBtn" class="btn alt" style="width:100%;">Campaign</button>
           </div>
         </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-hidden="true">
+          <h3>Settings</h3>
+          <div style="margin-bottom:8px">Audio</div>
+          <div class="range"><label style="width:76px">Music</label><input id="musicSlider" type="range" min="0" max="1" step="0.01" value="0.6"></div>
+          <div class="range" style="margin-top:8px"><label style="width:76px">SFX</label><input id="sfxSlider" type="range" min="0" max="1" step="0.01" value="0.9"></div>
+          <div style="height:12px"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end"><button id="closeSettings" class="btn">Close</button></div>
+        </div>
+
+        <!-- Shop Modal -->
+        <div class="modal" id="shopModal" role="dialog" aria-modal="true" aria-hidden="true">
+          <h3>Shop & Equipment</h3>
+          <div>Gold: <strong id="currency">0</strong></div>
+          <div class="shopGrid" id="shopGrid"></div>
+          <div style="height:12px"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end"><button id="closeShop" class="btn">Close</button></div>
+        </div>
+
       </div>
       <aside class="sidebar">
         <div style="margin-bottom:12px"><strong>Player</strong></div>
         <div id="playerSummary">Level 1 • Score: 0</div>
-        <div style="height:18px"></div>
+        <div style="height:12px"></div>
         <div><strong>Loadout</strong></div>
-        <div id="loadoutArea" style="margin-top:8px">Weapon: <em>Basic Blaster</em><br>Skin: <em>Neon Default</em></div>
+        <div id="loadoutArea" style="margin-top:8px;font-size:12px">Weapon: <em>Basic Blaster</em><br>Skin: <em>Default</em></div>
       </aside>
     </div>
     <div class="footer">
