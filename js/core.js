@@ -1,8 +1,9 @@
-// js/core.js - updated: wire UI controls and settings modal
+// js/core.js - wire shop & clickable enemy kills awarding gold
 import { AudioManager } from './js/audio.js';
 import { Player } from './js/player.js';
 import { UI } from './js/ui.js';
 import { EnemyController } from './js/enemies.js';
+import { shop } from './js/shop.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -14,6 +15,7 @@ resize();
 // Game state
 let state = 'home'; // home | playing | shop | settings
 const player = new Player();
+window.__PA_PLAYER_INSTANCE = player; // expose for Shop.apply demo
 const enemies = new EnemyController();
 
 // Audio
@@ -39,8 +41,8 @@ document.getElementById('sfxSlider').addEventListener('input', e=>{ AudioManager
 
 function showSettings(){ settingsModal.classList.add('show'); settingsModal.setAttribute('aria-hidden','false'); }
 function hideSettings(){ settingsModal.classList.remove('show'); settingsModal.setAttribute('aria-hidden','true'); }
-function showShop(){ shopModal.classList.add('show'); shopModal.setAttribute('aria-hidden','false'); }
-function hideShop(){ shopModal.classList.remove('show'); shopModal.setAttribute('aria-hidden','true'); }
+function showShop(){ shop.open(); }
+function hideShop(){ shop.close(); }
 
 function startMission(){
   state = 'playing';
@@ -49,8 +51,6 @@ function startMission(){
   enemies.reset();
   last = performance.now();
 }
-
-function openShop(){ showShop(); }
 
 let last = performance.now();
 function loop(now){
@@ -83,6 +83,18 @@ function render(){
 }
 
 requestAnimationFrame(loop);
+
+// clickable enemy kill to award gold for testing
+canvas.addEventListener('pointerdown', e=>{
+  if(state !== 'playing') return;
+  const idx = enemies.findAtScreen(e.clientX, e.clientY, canvas);
+  if(idx >= 0){
+    const killed = enemies.enemies.splice(idx,1)[0];
+    const val = killed.value || 8;
+    shop.addCurrency(val);
+    AudioManager.playHit();
+  }
+});
 
 // basic controls binding
 document.getElementById('playBtn').addEventListener('click', ()=>{ AudioManager.playClick(); UI.emit('play'); });
